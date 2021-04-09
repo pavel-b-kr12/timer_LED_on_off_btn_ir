@@ -10,8 +10,9 @@ uint16_t off_d=120000;
 //uint16_t on_d=15000;
 //uint16_t off_d=60000;
 
-#define  irLED			5 
 #define btn				A0
+#define  irLED			5 //optional if use IR Infrared Receiver (TL1838, TSOP...) instead of button
+//optional switches (jumpers)
 #define sw_10sec_on		A1
 #define sw_20sec_on		A2
 #define sw_60sec_off	A3
@@ -60,8 +61,10 @@ void setup() {
 		FastLED.setBrightness(33);
 	else FastLED.setBrightness(99);
 		
+		#ifdef irLED
 		pinMode (irLED, OUTPUT);
 		tone(irLED,38000); //!! test freq
+		#endif
 		
 		FastLED.addLeds<WS2812B,DATA_PIN,GRB>(leds, NUM_LEDS_now)
         .setCorrection( TypicalLEDStrip );
@@ -97,7 +100,9 @@ void loop() {
 	
 	if(millis()>signal_t) //show, anim signal (that allow to press btn
 	{
+		#ifdef irLED
 		pinMode (irLED, OUTPUT);
+		#endif
 		signal_on();
 	}
 	if(off_t>-1 && millis()<off_t) //anim //?? compare negative namber fail
@@ -117,7 +122,9 @@ void loop() {
 	
 	if((off_t>-1 && millis()>off_t))// || off_t-millis()> off_d
 	{
+		#ifdef irLED
 		pinMode (irLED, INPUT);
+		#endif
 		signal_t=millis()+off_d;
 		LED_off();
 		signal_off();
